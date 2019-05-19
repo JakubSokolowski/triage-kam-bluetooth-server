@@ -10,17 +10,20 @@ namespace Triage.Models
         public float Latitude { get; set; }
         public float Longitude { get; set; }
         public int HeartBeat { get; set; }
-        public int Breathing { get; set; }
+        public int BreathPerMinute { get; set; }
+        public int Pulse { get ;set; }
+        public int BloodSaturation { get;set; }
 
         public SensorPacket(byte [] data)
         {
             packetData = data;
             TimeStamp = DateTime.Now;
-            SensorId =  BitConverter.ToChar(packetData, 0) - '0';
-            Longitude = BitConverter.ToSingle(packetData, 2);
-            Latitude = BitConverter.ToSingle(packetData, 6);
-            HeartBeat = BitConverter.ToInt32(packetData, 10) - '0';
-            Breathing = BitConverter.ToInt32(packetData, 11) - '0';
+            SensorId =  BitConverter.ToInt32(packetData, 0);
+            Pulse =  BitConverter.ToInt32(packetData, 4);
+            BreathPerMinute =  BitConverter.ToInt32(packetData, 8);
+            BloodSaturation =  BitConverter.ToInt32(packetData, 12);
+            Latitude = BitConverter.ToInt32(packetData, 16);
+            Longitude = BitConverter.ToInt32(packetData, 20);
         }
     }
 }
