@@ -37,8 +37,11 @@ namespace Triage.Bluetooth.Advertising
                 string hex = BitConverter.ToString(buffer);
                 Console.WriteLine(String.Format("  DATA: {0}", hex.Replace("-", " ")));
             }
-            SensorPacket packet = new SensorPacket(packetData.ToArray()); 
-            DBWrapper.SaveSensorPacket(packet);
+            if(packetData.Count >= 24)
+            {
+                SensorPacket packet = new SensorPacket(packetData.ToArray());
+                DBWrapper.SaveSensorPacket(packet);
+            }
         }
 
         private void InitListener()
