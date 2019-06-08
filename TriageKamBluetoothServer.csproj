@@ -87,6 +87,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="JsonModels\actionConfig.json" />
+    <None Include="JsonModels\rescuer.json" />
+    <None Include="JsonModels\triageReport.json" />
+    <None Include="JsonModels\sensorData.json" />
+    <None Include="JsonModels\victim.json" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />

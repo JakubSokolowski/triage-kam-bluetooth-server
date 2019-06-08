@@ -1,0 +1,16 @@
+{
+  "currentPriority": "RED",
+  "state":  "TRIAGED",
+  "victimID": 1,
+  "comment":  "Left leg injury",
+  "reports": [
+    {
+
+    }
+  ],
+  "lifeLine": [
+    {
+      
+    }
+  ]
+}
