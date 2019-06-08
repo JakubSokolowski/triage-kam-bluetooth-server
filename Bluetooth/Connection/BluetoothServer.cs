@@ -40,14 +40,13 @@ namespace Triage.Bluetooth.Connection
             {
                 Console.WriteLine("Starting Serwer..");
                 rfcommProvider = await RfcommServiceProvider.CreateAsync(RfcommServiceId.FromUuid(RfcommServiceUuid));
-
                 // Create a listener for this service and start listening
                 socketListener = new StreamSocketListener();
                 socketListener.ConnectionReceived += OnConnectionReceived;
-
-                await socketListener.BindServiceNameAsync(rfcommProvider.ServiceId.AsString(),
-                   SocketProtectionLevel.PlainSocket);
-
+                await socketListener.BindServiceNameAsync(
+                    rfcommProvider.ServiceId.AsString(),
+                    SocketProtectionLevel.PlainSocket
+                );
                 // Set the SDP attributes and start Bluetooth advertising
                 InitializeServiceSdpAttributes(rfcommProvider);
                 rfcommProvider.StartAdvertising(socketListener);
@@ -57,7 +56,6 @@ namespace Triage.Bluetooth.Connection
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-
                 ServerInitiated = false;
             }
         }

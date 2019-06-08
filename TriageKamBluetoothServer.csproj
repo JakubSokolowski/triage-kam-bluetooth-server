@@ -79,11 +79,13 @@
     <Compile Include="Bluetooth\Connection\BluetoothServer.cs" />
     <Compile Include="Bluetooth\Connection\FieldReportServer.cs" />
     <Compile Include="Database\DBWrapper.cs" />
+    <Compile Include="Models\Rescuer.cs" />
     <Compile Include="Models\SensorPacket.cs" />
     <Compile Include="Models\TriageRaport.cs" />
     <Compile Include="Models\Victim.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\DateTimeExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

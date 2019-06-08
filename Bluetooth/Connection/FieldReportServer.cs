@@ -36,10 +36,10 @@ namespace Triage.Bluetooth.Connection
                 {
                     SendTriageMethod(socket);
                 }
-                else 
+                else
                 {   // Report
-                    // SaveTriageReport(socket, message);
-                    // Console.WriteLine(message);
+                    SaveTriageReport(socket, message);
+                    Console.WriteLine(message);
                     Console.WriteLine("METHOD: START");
                 }
            
@@ -73,8 +73,8 @@ namespace Triage.Bluetooth.Connection
             try
             {
                 Console.WriteLine("Saving triage report...");
-                var report = JsonConvert.DeserializeObject<TriageReport>(message);
-                DBWrapper.SaveTriageReport(report);
+                var report = new TriageReport();
+                DBWrapper.HandleNewTriageReport(report);
                 var wrt = new DataWriter(socket.OutputStream);
                 string response = "ACK";
                 wrt.WriteString(response + Environment.NewLine);

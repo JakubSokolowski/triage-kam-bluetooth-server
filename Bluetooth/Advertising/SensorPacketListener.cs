@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Triage.Models;
 using Windows.Devices.Bluetooth.Advertisement;
 using Windows.Storage.Streams;
+using Triage.Utils;
 
 namespace Triage.Bluetooth.Advertising
 {
@@ -26,35 +27,44 @@ namespace Triage.Bluetooth.Advertising
         private void OnAdvertisementReceived(BluetoothLEAdvertisementWatcher watcher, BluetoothLEAdvertisementReceivedEventArgs eventArgs)
         {
             Console.WriteLine("NEW PACKET: ");
-            var input = string.Format("0{0:X}", eventArgs.BluetoothAddress);
-           // System.Console.WriteLine(input);
-            var output = string.Join(":", Enumerable.Range(0, 6).Reverse()
-                .Select(i => input.Substring(i * 2, 2)));
-            var test = string.Join(":", output.Split(':'));
-            Console.WriteLine(String.Format("  BT_ADDR OUTPUT: {0}", output)); //return string.Format("0x{0:X}", temp);
-            Console.WriteLine(String.Format("  SIGNAL:       : {0}", eventArgs.RawSignalStrengthInDBm));
+           // var input = string.Format("0{0:X}", eventArgs.BluetoothAddress);
+           //// System.Console.WriteLine(input);
+           // var output = string.Join(":", Enumerable.Range(0, 6).Reverse()
+           //     .Select(i => input.Substring(i * 2, 2)));
+           // var test = string.Join(":", output.Split(':'));
+           // Console.WriteLine(String.Format("  BT_ADDR OUTPUT: {0}", output)); //return string.Format("0x{0:X}", temp);
+           // Console.WriteLine(String.Format("  SIGNAL:       : {0}", eventArgs.RawSignalStrengthInDBm));
           
-            List<byte> packetData = new List<byte>();
-            foreach (var section in eventArgs.Advertisement.DataSections)
+            //List<byte> packetData = new List<byte>();
+            //foreach (var section in eventArgs.Advertisement.DataSections)
+            //{
+            //    var dataReader = Windows.Storage.Streams.DataReader.FromBuffer(section.Data);
+            //    byte[] buffer = new byte[section.Data.Length];
+            //    dataReader.ReadBytes(buffer);
+            //    packetData.AddRange(buffer);
+            //    string hex = BitConverter.ToString(buffer);
+            //    string packet = hex;
+            //    if(packet.StartsWith("06-00-01-09-20"))
+            //        return;
+            //    Console.WriteLine(String.Format("  DATA: {0}", packet));
+            //}
+            //Console.WriteLine("");
+            //Console.WriteLine("");
+            for(int i = 1 ; i < 4; i++)
             {
-                var dataReader = Windows.Storage.Streams.DataReader.FromBuffer(section.Data);
-                byte[] buffer = new byte[section.Data.Length];
-                dataReader.ReadBytes(buffer);
-                packetData.AddRange(buffer);
-                string hex = BitConverter.ToString(buffer);
-                string packet = hex;
-                if(packet.StartsWith("06-00-01-09-20"))
-                    return;
-                Console.WriteLine(String.Format("  DATA: {0}", packet));
+                SensorPacket pc = new SensorPacket();
+                pc.SensorID = i;
+                DBWrapper.InsertSensorPacket(pc);
             }
-            Console.WriteLine("");
-            Console.WriteLine("");
-            if (packetData.Count >= 10)
-            {
-                //SensorPacket packet = new SensorPacket(packetData.ToArray());
-                //packet.Print();
-                //DBWrapper.SaveSensorPacket(packet);
-            }
+          
+            // packet.Print();
+          
+            //if (packetData.Count >= 10)
+            //{
+            //    SensorPacket packet = new SensorPacket();
+            //    // packet.Print();
+            //    DBWrapper.InsertSensorPacket(packet);
+            //}
             //var manufacturerSections = eventArgs.Advertisement.ManufacturerData;
             //Console.WriteLine(String.Format("Advertisement:"));
 

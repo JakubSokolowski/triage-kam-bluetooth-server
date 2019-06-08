@@ -10,7 +10,7 @@ namespace Triage
     {
         static void Main(string[] args)
         {
-            //DBWrapper.Connect();
+            DBWrapper.Connect();
             var serv = new FieldReportServer();
             try
             {
