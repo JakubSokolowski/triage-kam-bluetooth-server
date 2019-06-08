@@ -1,0 +1,15 @@
+{
+  "currentPriority": "RED",
+  "state":  "TRIAGED",
+  "victimID": 1,
+  "reports": [
+    {
+
+    }
+  ],
+  "sensorReads": [
+    {
+      
+    }
+  ]
+}
