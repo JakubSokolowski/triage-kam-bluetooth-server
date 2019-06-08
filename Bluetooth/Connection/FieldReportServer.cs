@@ -1,10 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Triage.Bluetooth.Advertising;
 using Triage.Models;
-using Windows.Devices.Bluetooth.Rfcomm;
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
 
@@ -30,7 +28,7 @@ namespace Triage.Bluetooth.Connection
                 var reader = new DataReader(socket.InputStream);
 
                 // Read incoming msg length
-                uint readLength = await reader.LoadAsync(4);
+                uint readLength = await reader.LoadAsync(22);
                 if (readLength < sizeof(uint)) return;
 
                 string message = reader.ReadString(readLength);
@@ -40,7 +38,9 @@ namespace Triage.Bluetooth.Connection
                 }
                 else 
                 {   // Report
-                    SaveTriageReport(socket, message);
+                    // SaveTriageReport(socket, message);
+                    // Console.WriteLine(message);
+                    Console.WriteLine("METHOD: START");
                 }
            
             }

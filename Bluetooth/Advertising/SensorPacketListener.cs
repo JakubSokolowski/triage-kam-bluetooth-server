@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Triage.Models;
 using Windows.Devices.Bluetooth.Advertisement;
+using Windows.Storage.Streams;
 
 namespace Triage.Bluetooth.Advertising
 {
@@ -24,9 +25,15 @@ namespace Triage.Bluetooth.Advertising
 
         private void OnAdvertisementReceived(BluetoothLEAdvertisementWatcher watcher, BluetoothLEAdvertisementReceivedEventArgs eventArgs)
         {
-            Console.WriteLine(String.Format("Advertisement:"));
-            Console.WriteLine(String.Format("  BT_ADDR: {0}", eventArgs.BluetoothAddress));
-            Console.WriteLine(String.Format("  FR_NAME: {0}", eventArgs.Advertisement.LocalName));
+            Console.WriteLine("NEW PACKET: ");
+            var input = string.Format("0{0:X}", eventArgs.BluetoothAddress);
+           // System.Console.WriteLine(input);
+            var output = string.Join(":", Enumerable.Range(0, 6).Reverse()
+                .Select(i => input.Substring(i * 2, 2)));
+            var test = string.Join(":", output.Split(':'));
+            Console.WriteLine(String.Format("  BT_ADDR OUTPUT: {0}", output)); //return string.Format("0x{0:X}", temp);
+            Console.WriteLine(String.Format("  SIGNAL:       : {0}", eventArgs.RawSignalStrengthInDBm));
+          
             List<byte> packetData = new List<byte>();
             foreach (var section in eventArgs.Advertisement.DataSections)
             {
@@ -35,13 +42,22 @@ namespace Triage.Bluetooth.Advertising
                 dataReader.ReadBytes(buffer);
                 packetData.AddRange(buffer);
                 string hex = BitConverter.ToString(buffer);
-                Console.WriteLine(String.Format("  DATA: {0}", hex.Replace("-", " ")));
+                string packet = hex;
+                if(packet.StartsWith("06-00-01-09-20"))
+                    return;
+                Console.WriteLine(String.Format("  DATA: {0}", packet));
             }
-            if(packetData.Count >= 24)
+            Console.WriteLine("");
+            Console.WriteLine("");
+            if (packetData.Count >= 10)
             {
-                SensorPacket packet = new SensorPacket(packetData.ToArray());
-                DBWrapper.SaveSensorPacket(packet);
+                //SensorPacket packet = new SensorPacket(packetData.ToArray());
+                //packet.Print();
+                //DBWrapper.SaveSensorPacket(packet);
             }
+            //var manufacturerSections = eventArgs.Advertisement.ManufacturerData;
+            //Console.WriteLine(String.Format("Advertisement:"));
+
         }
 
         private void InitListener()
@@ -52,12 +68,21 @@ namespace Triage.Bluetooth.Advertising
             };
 
             // Only activate the watcher when we're recieving values >= -80
-            watcher.SignalStrengthFilter.InRangeThresholdInDBm = -80;
-            watcher.SignalStrengthFilter.OutOfRangeThresholdInDBm = -90;
+            watcher.SignalStrengthFilter.InRangeThresholdInDBm = -90;
+            watcher.SignalStrengthFilter.OutOfRangeThresholdInDBm = -95;
             watcher.SignalStrengthFilter.OutOfRangeTimeout = TimeSpan.FromMilliseconds(5000);
             watcher.SignalStrengthFilter.SamplingInterval = TimeSpan.FromMilliseconds(2000);
 
             watcher.Received += OnAdvertisementReceived;
         }
+        private string Reverse(string text)
+        {
+            if (text == null) return null;
+
+            char[] array = text.ToCharArray();
+            Array.Reverse(array);
+            return new String(array);
+        }
+
     }
 }
