@@ -10,7 +10,7 @@ namespace Triage.Models
         private readonly byte[] packetData;
 
         [BsonId]
-        public ObjectId ID { get; set; }
+        public ObjectId ID { get; set; } = ObjectId.GenerateNewId();
         [BsonElement("timestamp")]
         public long Timestamp { get; set; }
         [BsonElement("sensorID")]
@@ -37,10 +37,10 @@ namespace Triage.Models
         {
             packetData = new byte[10];
             Timestamp = DateTime.Now.ToUnixTimestamp();
-            SensorID = new Random().Next(1, 4);
-            Pulse = new Random().Next(0, 200);
-            BreathPerMinute = new Random().Next(0, 50);
-            Saturation = new Random().Next(0, 10);
+            SensorID = new Random().Next(1, 100);
+            Pulse = new Random().Next(0, 160);
+            BreathPerMinute = new Random().Next(0, 60);
+            Saturation = new Random().Next(0, 100);
         }
 
         public void Print()

@@ -50,7 +50,7 @@ namespace Triage.Bluetooth.Advertising
             //}
             //Console.WriteLine("");
             //Console.WriteLine("");
-            for(int i = 1 ; i < 4; i++)
+            for(int i = 1 ; i < 30; i++)
             {
                 SensorPacket pc = new SensorPacket();
                 pc.SensorID = i;

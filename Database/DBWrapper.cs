@@ -21,7 +21,9 @@ namespace Triage.Bluetooth.Advertising
                 Console.WriteLine("Connecting...");
                 client = new MongoClient(connectionString);
                 var db = client.GetDatabase("triage");
-                victims = db.GetCollection < Victim > ("victims");
+                db.DropCollection("victims");
+                db.CreateCollection("victims");
+                victims = db.GetCollection < Victim > ("victims");                
                 reports = db.GetCollection<TriageReport>("reports");
                 rescuers = db.GetCollection<Rescuer>("rescuers");
             } catch(Exception ex)

@@ -14,7 +14,7 @@ namespace Triage.Models
     public class Victim
     {
         [BsonId]
-        public ObjectId ID { get; set; }
+        public ObjectId ID { get; set; } = ObjectId.GenerateNewId();
         [BsonElement("victimID")]
         public int VictimID {get; set;}
         [BsonElement("currentPriority")]

@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using Triage.Bluetooth.Advertising;
 using Triage.Bluetooth.Connection;
+using MongoDB.Bson.Serialization.Conventions;
+using MongoDB.Bson;
 
 namespace Triage
 {
@@ -10,6 +12,13 @@ namespace Triage
     {
         static void Main(string[] args)
         {
+            ConventionPack pack = new ConventionPack
+            {
+                new EnumRepresentationConvention(BsonType.String),
+                new CamelCaseElementNameConvention(),
+            };
+
+            ConventionRegistry.Register("EnumStringConvention", pack, t => true);
             DBWrapper.Connect();
             var serv = new FieldReportServer();
             try
