@@ -26,49 +26,45 @@ namespace Triage.Bluetooth.Advertising
 
         private void OnAdvertisementReceived(BluetoothLEAdvertisementWatcher watcher, BluetoothLEAdvertisementReceivedEventArgs eventArgs)
         {
-            Console.WriteLine("NEW PACKET: ");
-            var input = string.Format("0{0:X}", eventArgs.BluetoothAddress);
-            // System.Console.WriteLine(input);
-            var output = string.Join(":", Enumerable.Range(0, 6).Reverse()
-                .Select(i => input.Substring(i * 2, 2)));
-            var test = string.Join(":", output.Split(':'));
-            Console.WriteLine("  BT_ADDR : {0}", output); //return string.Format("0x{0:X}", temp);
-            Console.WriteLine("  SIGNAL  : {0}", eventArgs.RawSignalStrengthInDBm);
-          
-            List<byte> packetData = new List<byte>();
-            int count = 0;
-            foreach (var section in eventArgs.Advertisement.DataSections)
+            try
             {
-                var dataReader = DataReader.FromBuffer(section.Data);
-                byte[] buffer = new byte[section.Data.Length];
-                dataReader.ReadBytes(buffer);
-                packetData.AddRange(buffer);
-                string hex = BitConverter.ToString(buffer);
-                string packet = hex.Replace("-", ":");
-                Console.WriteLine("  DATA {0}  : {1}", count, packet);
-                count++;
-            }
-            Console.WriteLine("  STR     : {0}", Encoding.Default.GetString(packetData.ToArray()));
-            Console.WriteLine("");
-            Console.WriteLine("");
-            Console.WriteLine("Inserting random packets")
-            for (int i = 1 ; i < 100; i++)
+                Console.WriteLine("NEW PACKET: ");
+                var input = string.Format("0{0:X}", eventArgs.BluetoothAddress);
+                // System.Console.WriteLine(input);
+                var output = string.Join(":", Enumerable.Range(0, 6).Reverse()
+                    .Select(i => input.Substring(i * 2, 2)));
+                var test = string.Join(":", output.Split(':'));
+                Console.WriteLine("  BT_ADDR : {0}", output); //return string.Format("0x{0:X}", temp);
+                Console.WriteLine("  SIGNAL  : {0}", eventArgs.RawSignalStrengthInDBm);
+
+                List<byte> packetData = new List<byte>();
+                int count = 0;
+                foreach (var section in eventArgs.Advertisement.DataSections)
+                {
+                    var dataReader = DataReader.FromBuffer(section.Data);
+                    byte[] buffer = new byte[section.Data.Length];
+                    dataReader.ReadBytes(buffer);
+                    packetData.AddRange(buffer);
+                    string hex = BitConverter.ToString(buffer);
+                    string packet = hex.Replace("-", ":");
+                    Console.WriteLine("  DATA {0}  : {1}", count, packet);
+                    count++;
+                }
+                Console.WriteLine("  STR     : {0}", Encoding.Default.GetString(packetData.ToArray()));
+                Console.WriteLine("");
+                Console.WriteLine("");
+                Console.WriteLine("Inserting packets");
+                for (int i = 1; i < 100; i++)
+                {
+                    SensorPacket pc = new SensorPacket();
+                    pc.SensorID = i;
+                    DBWrapper.InsertSensorPacket(pc);
+                }
+            } catch(Exception ex)
             {
-                SensorPacket pc = new SensorPacket();
-                pc.SensorID = i;
-                DBWrapper.InsertSensorPacket(pc);
-            }
-          
-            // packet.Print();
-          
-            //if (packetData.Count >= 10)
-            //{
-            //    SensorPacket packet = new SensorPacket();
-            //    // packet.Print();
-            //    DBWrapper.InsertSensorPacket(packet);
-            //}
-            //var manufacturerSections = eventArgs.Advertisement.ManufacturerData;
-            //Console.WriteLine(String.Format("Advertisement:"));
+                Console.WriteLine("Error reeiving packet");
+            }          
+           
 
         }
 
@@ -79,7 +75,6 @@ namespace Triage.Bluetooth.Advertising
                 ScanningMode = BluetoothLEScanningMode.Active
             };
 
-            // Only activate the watcher when we're recieving values >= -80
             watcher.SignalStrengthFilter.InRangeThresholdInDBm = -90;
             watcher.SignalStrengthFilter.OutOfRangeThresholdInDBm = -95;
             watcher.SignalStrengthFilter.OutOfRangeTimeout = TimeSpan.FromMilliseconds(5000);
