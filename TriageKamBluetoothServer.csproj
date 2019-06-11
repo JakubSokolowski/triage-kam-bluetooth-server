@@ -79,9 +79,11 @@
     <Compile Include="Bluetooth\Connection\BluetoothServer.cs" />
     <Compile Include="Bluetooth\Connection\FieldReportServer.cs" />
     <Compile Include="Database\DBWrapper.cs" />
+    <Compile Include="Models\ActionConfig.cs" />
     <Compile Include="Models\Rescuer.cs" />
     <Compile Include="Models\SensorPacket.cs" />
     <Compile Include="Models\TriageRaport.cs" />
+    <Compile Include="Models\User.cs" />
     <Compile Include="Models\Victim.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

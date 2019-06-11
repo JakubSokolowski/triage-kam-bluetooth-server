@@ -8,7 +8,7 @@ using Windows.Storage.Streams;
 
 namespace Triage.Bluetooth.Connection
 {
-    class FieldReportServer : BluetoothServer
+    class TriageReportServer : BluetoothServer
     {
         private new static readonly Guid RfcommServiceUuid = Guid.Parse("00001101-0000-1000-8000-00805F9B34FB");
         private new const string SdpServiceName = "KAM BT Report Server";
@@ -35,12 +35,11 @@ namespace Triage.Bluetooth.Connection
                 if (message == "METHOD")
                 {
                     SendTriageMethod(socket);
+                    Console.WriteLine("METHOD: START");
                 }
                 else
                 {   // Report
                     SaveTriageReport(socket, message);
-                    Console.WriteLine(message);
-                    Console.WriteLine("METHOD: START");
                 }
            
             }
@@ -53,10 +52,10 @@ namespace Triage.Bluetooth.Connection
 
         private void PrintClientInfo(StreamSocketInformation information)
         {
-            Console.WriteLine("Handling new Connection...");
-            Console.WriteLine(String.Format("RemoteAddress: {0}", information.RemoteHostName));
-            Console.WriteLine(String.Format("RemoteHostName: {0}", information.RemoteAddress));
-            Console.WriteLine(String.Format("RemoteServiceName: {0}", information.RemoteServiceName));
+            Console.WriteLine("Handling new Report...");
+            Console.WriteLine(String.Format("   RemoteAddress     : {0}", information.RemoteHostName));
+            Console.WriteLine(String.Format("   RemoteHostName    : {0}", information.RemoteAddress));
+            Console.WriteLine(String.Format("   RemoteServiceName : {0}", information.RemoteServiceName));
         }
 
         private async void SendTriageMethod(StreamSocket socket)
@@ -72,7 +71,7 @@ namespace Triage.Bluetooth.Connection
         {
             try
             {
-                Console.WriteLine("Saving triage report...");
+                Console.WriteLine("   Generating example triage report...");
                 var report = new TriageReport();
                 DBWrapper.HandleNewTriageReport(report);
                 var wrt = new DataWriter(socket.OutputStream);

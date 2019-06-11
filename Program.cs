@@ -20,7 +20,7 @@ namespace Triage
 
             ConventionRegistry.Register("EnumStringConvention", pack, t => true);
             DBWrapper.Connect();
-            var serv = new FieldReportServer();
+            var serv = new TriageReportServer();
             try
             {
                 var listener = new SensorPacketListener();

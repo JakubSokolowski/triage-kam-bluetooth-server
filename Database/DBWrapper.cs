@@ -13,19 +13,16 @@ namespace Triage.Bluetooth.Advertising
         private static IMongoCollection<Victim> victims;
         private static IMongoCollection<TriageReport> reports;
         private static IMongoCollection<Rescuer> rescuers;
+        private static IMongoCollection<User> users;
+        private static IMongoCollection<ActionConfig> actionConfigs;
 
         public static void Connect()
         {
             try
             {
-                Console.WriteLine("Connecting...");
                 client = new MongoClient(connectionString);
-                var db = client.GetDatabase("triage");
-                db.DropCollection("victims");
-                db.CreateCollection("victims");
-                victims = db.GetCollection < Victim > ("victims");                
-                reports = db.GetCollection<TriageReport>("reports");
-                rescuers = db.GetCollection<Rescuer>("rescuers");
+                DropExistingCollections();
+                CreateAndFillNewCollections();
             } catch(Exception ex)
             {
                 Console.WriteLine(ex.Message);
@@ -47,28 +44,71 @@ namespace Triage.Bluetooth.Advertising
         }
 
         public static void HandleNewTriageReport(TriageReport triageReport)
+        {          
+            if(ShouldAddNewVictim(triageReport))
+                InsertNewVictim(triageReport);
+            else
+                AddNewReportToVictim(triageReport);
+
+            if(ShouldAddNewRescuer(triageReport))
+                InsertNewRescuer(triageReport);
+            else
+                AddNewReportToRescuer(triageReport);
+        }
+        
+        private static void DropExistingCollections()
+        {
+            var db = client.GetDatabase("triage");
+            db.DropCollection("victims");
+            db.DropCollection("rescuers");
+            db.DropCollection("users");
+            db.DropCollection("actionConfigs");
+            Console.WriteLine("Dropped existing victims and users collection...");
+        }
+
+        private static void CreateAndFillNewCollections()
+        {
+            var db = client.GetDatabase("triage");
+            victims = db.GetCollection<Victim>("victims");
+            reports = db.GetCollection<TriageReport>("reports");
+            rescuers = db.GetCollection<Rescuer>("rescuers");
+            users = db.GetCollection<User>("users");
+            actionConfigs = db.GetCollection<ActionConfig>("actionconfigs");
+
+            FillUserCollection();
+            FillActionConfigs();
+        }
+
+        private static void FillUserCollection()
+        {
+            List<User> newUsers = new List<User>
+            {
+                new User{Username = "admin", Password = "123123123"},
+                new User{Username = "namidad", Password = "namidad12"}
+            };
+            users.InsertMany(newUsers);
+        }
+
+        private static void FillActionConfigs()
+        {
+            List<ActionConfig> configs = new List<ActionConfig>
+            {
+                new ActionConfig{Name = "START", IsUsed = true, RescuersNum = 0, VictimsNum = 0 },
+                new ActionConfig{Name = "JUMPSTART", IsUsed = false, RescuersNum = 0, VictimsNum = 0 }
+            };
+            actionConfigs.InsertMany(configs);
+        }
+  
+        private static bool ShouldAddNewRescuer(TriageReport triageReport)
+        {
+            long count = rescuers.Find(v => v.RescuerID == triageReport.RescuerID).CountDocuments();
+            return count == 0;
+        }
+
+        private static bool ShouldAddNewVictim(TriageReport triageReport)
         {
             long count = victims.Find(v => v.VictimID == triageReport.SensorData.SensorID).CountDocuments();
-            long rescuerCount = rescuers.Find(v => v.RescuerID == triageReport.RescuerID).CountDocuments();
-            if(count > 0)
-            {
-                // Victim exists
-               
-                AddNewReportToVictim(triageReport);
-            } else
-            {
-                InsertNewVictim(triageReport);
-            }      
-
-            if(rescuerCount > 0)
-            {
-                AddNewReportToRescuer(triageReport);
-            }
-            else
-            {
-                InsertNewRescuer(triageReport);
-            }
-
+            return count == 0;
         }
 
         private static async void AddNewReportToVictim(TriageReport report)
